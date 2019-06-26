@@ -33,7 +33,7 @@ class IFTTTWebhookActor(ActorBase):
 
         try:
             response = requests.get(url)
-            # print(response)
+            print(response)
         except requests.exceptions.RequestException as err:
             print(err)
             cbpi.notify(
