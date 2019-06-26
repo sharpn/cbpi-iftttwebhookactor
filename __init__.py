@@ -5,6 +5,10 @@ import logging
 import time
 import requests
 
+# ifttt_key = None
+# ifttt_event = None
+# ifttt = None
+
 
 @cbpi.actor
 class IFTTTWebhookActor(ActorBase):
@@ -20,12 +24,20 @@ class IFTTTWebhookActor(ActorBase):
     power = 100
 
     def send(self, command):
+        print(self.key)
         if self.key is None:
-            cbpi.notify("IFTTT Send Error", "Unable to send as the IFTTT key is not set",
-                        type="danger", timeout=None)
+            cbpi.notify("IFTTT Key Error", "The IFTTT maker key must be set",
+                        type="warning", timeout=None)
 
         url = self.ifttt_url.format(command, self.key)
-        requests.get(url)
+
+        try:
+            response = requests.get(url)
+            # print(response)
+        except requests.exceptions.RequestException as err:
+            print(err)
+            cbpi.notify(
+                "IFTTT Send Error", "There was an error sending the request to IFTTT", type="error", timeout=5)
 
     def on(self, power=None):
         self.send(self.on_hook)
