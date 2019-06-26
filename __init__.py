@@ -5,10 +5,6 @@ import logging
 import time
 import requests
 
-# ifttt_key = None
-# ifttt_event = None
-# ifttt = None
-
 
 @cbpi.actor
 class IFTTTWebhookActor(ActorBase):
@@ -25,7 +21,7 @@ class IFTTTWebhookActor(ActorBase):
 
     def send(self, command):
         print(self.key)
-        if self.key is None:
+        if self.key is None or self.key == '':
             cbpi.notify("IFTTT Key Error", "The IFTTT maker key must be set",
                         type="warning", timeout=None)
 
@@ -33,11 +29,12 @@ class IFTTTWebhookActor(ActorBase):
 
         try:
             response = requests.get(url)
-            print(response)
+            response.raise_for_status()
         except requests.exceptions.RequestException as err:
-            print(err)
             cbpi.notify(
-                "IFTTT Send Error", "There was an error sending the request to IFTTT", type="error", timeout=5)
+                "IFTTT Send Error", "There was an error sending the request to IFTTT. Please check your key", type="danger", timeout=20000)
+            self.api.app.logger.error(
+                "FAILED to switch IFTTT actor: {}".format(command))
 
     def on(self, power=None):
         self.send(self.on_hook)
