@@ -20,7 +20,7 @@ class IFTTTWebhookActor(ActorBase):
     power = 100
 
     def send(self, command):
-        print(self.key)
+        print((self.key))
         if self.key is None or self.key == '':
             cbpi.notify("IFTTT Key Error", "The IFTTT maker key must be set",
                         type="warning", timeout=None)
